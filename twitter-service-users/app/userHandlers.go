@@ -26,13 +26,16 @@ func (h *userHandlers) create(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	entity := userDto.ToEntity()
-	token, err := h.service.Create(&entity)
+	token, createdUser, err := h.service.Create(&entity)
 	if err != nil {
 		handlers.WriteResponse(w, err.Code, err)
 		return
 	}
 
-	handlers.WriteResponse(w, http.StatusCreated, dto.TokenDto{Token: token})
+	handlers.WriteResponse(w, http.StatusCreated, dto.NewUserDto{
+		User:  dto.ToDto(*createdUser),
+		Token: dto.TokenDto{Token: token},
+	})
 }
 
 func (h *userHandlers) auth(w http.ResponseWriter, r *http.Request) {

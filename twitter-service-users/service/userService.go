@@ -13,7 +13,7 @@ var passwordErr = errs.NewAppError(
 	http.StatusUnauthorized)
 
 type UserService interface {
-	Create(*domain.User) (string, *errs.AppError)
+	Create(*domain.User) (string, *domain.User, *errs.AppError)
 	Authenticate(*domain.User) (string, *errs.AppError)
 }
 
@@ -25,14 +25,16 @@ func NewUserService(repo domain.UserRepo) UserService {
 	return &defaultUserService{repo}
 }
 
-func (s *defaultUserService) Create(user *domain.User) (string, *errs.AppError) {
-	if err := s.repo.Create(user); err != nil {
-		return "", errs.NewAppError(
+func (s *defaultUserService) Create(user *domain.User) (string, *domain.User, *errs.AppError) {
+	user, err := s.repo.Create(user)
+	if err != nil {
+		return "", nil, errs.NewAppError(
 			"can not create user: "+err.Error(),
 			http.StatusInternalServerError)
 	}
 
-	return generateToken(user.Username)
+	token, tokenErr := generateToken(user.Username)
+	return token, user, tokenErr
 }
 
 func (s *defaultUserService) Authenticate(user *domain.User) (string, *errs.AppError) {

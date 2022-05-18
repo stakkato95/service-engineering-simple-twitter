@@ -4,11 +4,15 @@ go 1.18
 
 require github.com/stakkato95/service-engineering-go-lib v0.1.2
 
+require github.com/go-sql-driver/mysql v1.6.0 // indirect
+
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-chi/chi/v5 v5.0.7
+	github.com/golang-migrate/migrate v3.5.4+incompatible
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/jmoiron/sqlx v1.3.5
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
