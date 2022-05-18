@@ -10,9 +10,6 @@ import (
 )
 
 func Start() {
-	logger.Info("works")
-	logger.Info(config.AppConfig.ServerPort)
-
 	service := service.NewUserService()
 	h := userHandlers{service}
 
@@ -22,5 +19,5 @@ func Start() {
 	router.Get("/debug/hello", h.hello)
 
 	logger.Info("users service listening on port " + config.AppConfig.ServerPort)
-	logger.Fatal("ca not run server " + http.ListenAndServe(config.AppConfig.ServerPort, router).Error())
+	logger.Fatal("can not run server " + http.ListenAndServe(config.AppConfig.ServerPort, router).Error())
 }

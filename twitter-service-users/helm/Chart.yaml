@@ -3,24 +3,15 @@ name: twitter-service-users
 description: A Helm chart for twitter users service
 
 home: https://github.com/stakkato95/service-engineering-simple-twitter
-sources:
-  - https://github.com/stakkato95/service-engineering-simple-twitter
-  - https://github.com/stakkato95/service-engineering-go-lib
 
 maintainers:
   - name: Artsiom Kaliaha
     email: stakkato95@gmail.com
 
-# A chart can be either an 'application' or a 'library' chart.
 type: application
 
-# This is the chart version. This version number should be incremented each time you make changes
-# to the chart and its templates, including the app version.
-# Versions are expected to follow Semantic Versioning (https://semver.org/)
+# Chart version. Versions are expected to follow Semantic Versioning (https://semver.org/)
 version: 0.1.0
 
-# This is the version number of the application being deployed. This version number should be
-# incremented each time you make changes to the application. Versions are not expected to
-# follow Semantic Versioning. They should reflect the version the application is using.
-# It is recommended to use it with quotes.
+# Application version
 appVersion: "0.1.0"
