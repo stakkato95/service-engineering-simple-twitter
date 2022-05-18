@@ -18,7 +18,8 @@ func Start() {
 
 	router := chi.NewRouter()
 
-	router.Get("/hello", h.hello)
+	//chi nested handlers
+	router.Get("/debug/hello", h.hello)
 
 	logger.Info("users service listening on port " + config.AppConfig.ServerPort)
 	logger.Fatal("ca not run server " + http.ListenAndServe(config.AppConfig.ServerPort, router).Error())

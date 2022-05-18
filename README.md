@@ -3,3 +3,5 @@ very simple version of twitter
 
 besonderheit go-service-lib
 https://github.com/stakkato95/service-engineering-go-lib
+
+Dockerfile - soll im projekt bleiben
