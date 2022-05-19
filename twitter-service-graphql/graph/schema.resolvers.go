@@ -6,19 +6,16 @@ package graph
 import (
 	"context"
 
-	"github.com/stakkato95/service-engineering-go-lib/logger"
 	"github.com/stakkato95/twitter-service-graphql/graph/generated"
 	"github.com/stakkato95/twitter-service-graphql/graph/model"
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (string, error) {
-	logger.Info("not implemented")
-	return "hello", nil
+	return r.Service.Create(input)
 }
 
 func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string, error) {
-	logger.Info("not implemented")
-	return "world", nil
+	return r.Service.Authenticate(input)
 }
 
 // Mutation returns generated.MutationResolver implementation.

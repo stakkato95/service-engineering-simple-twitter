@@ -10,11 +10,18 @@ import (
 	"github.com/stakkato95/twitter-service-graphql/config"
 	"github.com/stakkato95/twitter-service-graphql/graph"
 	"github.com/stakkato95/twitter-service-graphql/graph/generated"
+	"github.com/stakkato95/twitter-service-graphql/http/domain"
+	"github.com/stakkato95/twitter-service-graphql/http/service"
 )
 
 func main() {
+	repo := domain.NewUserRepo()
+	service := service.NewUserService(repo)
+
 	router := chi.NewRouter()
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
+		Resolvers: &graph.Resolver{Service: service},
+	}))
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", srv)

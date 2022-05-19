@@ -4,4 +4,10 @@ package graph
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
-type Resolver struct{}
+import (
+	"github.com/stakkato95/twitter-service-graphql/http/service"
+)
+
+type Resolver struct {
+	Service service.UserService
+}
