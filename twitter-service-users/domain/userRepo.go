@@ -7,6 +7,9 @@ import (
 	"github.com/golang-migrate/migrate/database/mysql"
 	"github.com/stakkato95/service-engineering-go-lib/logger"
 	"github.com/stakkato95/twitter-service-users/config"
+
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/golang-migrate/migrate/source/file"
 )
 
 type UserRepo interface {
@@ -30,11 +33,10 @@ func NewUserRepo() UserRepo {
 
 	repo := &defaultUserRepo{db: db}
 
-	//1 test ohne migrations LOCALHOST
 	//2 test mit migrations LOCALHOST
 	//3 test service in k8s + mysql in k8s >>>>>> mysql2.default.svc.cluster.local
 
-	// repo.migrate()
+	repo.migrate()
 
 	return repo
 }
@@ -49,11 +51,15 @@ func (r *defaultUserRepo) Authenticate(user *User) (string, error) {
 
 func (r *defaultUserRepo) migrate() {
 	driver, _ := mysql.WithInstance(r.db, &mysql.Config{})
-	m, _ := migrate.NewWithDatabaseInstance(
-		"file:///migrations",
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://migrations",
 		config.AppConfig.DbName,
 		driver,
 	)
+	if err != nil {
+		logger.Fatal("can not migrate up: " + err.Error())
+	}
+
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		logger.Fatal("can not migrate up: " + err.Error())
 	}
