@@ -1,0 +1,7 @@
+mutation {
+  createUser(input: {username: "user1", password: "pass"})
+}
+
+mutation {
+  login(input: {username: "user1", password: "pass"})
+}

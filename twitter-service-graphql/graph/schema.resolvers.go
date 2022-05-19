@@ -5,28 +5,23 @@ package graph
 
 import (
 	"context"
-	"errors"
 
 	"github.com/stakkato95/service-engineering-go-lib/logger"
 	"github.com/stakkato95/twitter-service-graphql/graph/generated"
 	"github.com/stakkato95/twitter-service-graphql/graph/model"
 )
 
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (string, error) {
 	logger.Info("not implemented")
-	return nil, errors.New("not implemented")
+	return "hello", nil
 }
 
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
+func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string, error) {
 	logger.Info("not implemented")
-	return nil, errors.New("not implemented")
+	return "world", nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
-// Query returns generated.QueryResolver implementation.
-func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
-
 type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
