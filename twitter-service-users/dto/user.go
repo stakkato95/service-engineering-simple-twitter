@@ -3,9 +3,9 @@ package dto
 import "github.com/stakkato95/twitter-service-users/domain"
 
 type UserDto struct {
-	Id       string `json:"id"`
+	Id       int64  `json:"id"`
 	Username string `json:"username"`
-	Password string `json:"password"`
+	Password string `json:"password,omitempty"`
 }
 
 func (u *UserDto) ToEntity() domain.User {

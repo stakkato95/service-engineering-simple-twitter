@@ -6,6 +6,7 @@ import (
 	"github.com/stakkato95/service-engineering-go-lib/errs"
 	"github.com/stakkato95/twitter-service-users/domain"
 	"github.com/stakkato95/twitter-service-users/jwt"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var passwordErr = errs.NewAppError(
@@ -53,9 +54,8 @@ func (s *defaultUserService) Authenticate(user *domain.User) (string, *errs.AppE
 }
 
 func checkPasswordHash(hashedPassword, hash string) bool {
-	return true
-	// err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(hashedPassword))
-	// return err == nil
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(hashedPassword))
+	return err == nil
 }
 
 func generateToken(username string) (string, *errs.AppError) {
