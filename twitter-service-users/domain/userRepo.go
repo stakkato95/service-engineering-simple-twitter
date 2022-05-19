@@ -29,6 +29,11 @@ func NewUserRepo() UserRepo {
 	}
 
 	repo := &defaultUserRepo{db: db}
+
+	//1 test ohne migrations LOCALHOST
+	//2 test mit migrations LOCALHOST
+	//3 test service in k8s + mysql in k8s >>>>>> mysql2.default.svc.cluster.local
+
 	// repo.migrate()
 
 	return repo
