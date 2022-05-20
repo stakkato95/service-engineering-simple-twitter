@@ -15,6 +15,13 @@ import (
 )
 
 func main() {
+	//1 add http calls to users service (users in k8s + graphql on localhost)
+	//2 add http calls to users service (users in k8s + graphql in k8s)
+
+	//3 add grpc to users service
+	//4 add grpc calls to users service (users in k8s + graphql on localhost)
+	//5 add grpc calls to users service (users in k8s + graphql in k8s)
+
 	repo := domain.NewUserRepo()
 	service := service.NewUserService(repo)
 

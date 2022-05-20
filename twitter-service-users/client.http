@@ -12,7 +12,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:{{port}}{{pathPrefix}}/debug/auth
+POST http://localhost:{{port}}{{pathPrefix}}/debug/auth
 Content-Type: application/json
 
 {
