@@ -19,11 +19,10 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: http
+            - name: {{ .Values.service.http.name }}-container
               containerPort: 8080
               protocol: TCP
-          ports:
-            - name: grpc
+            - name: {{ .Values.service.grpc.name }}-container
               containerPort: 9090
               protocol: TCP
           # livenessProbe:

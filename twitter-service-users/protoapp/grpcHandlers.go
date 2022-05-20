@@ -17,6 +17,7 @@ func (defaultUsersServiceServer) CreateUser(ctx context.Context, user *pb.User) 
 			Username: "user100500",
 			Password: "pass",
 		},
+		Token: &pb.Token{Token: "tokenn"},
 	}
 	return u, nil
 }

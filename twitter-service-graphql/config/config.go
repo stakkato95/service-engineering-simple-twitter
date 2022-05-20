@@ -1,14 +1,21 @@
 package config
 
-import "github.com/stakkato95/service-engineering-go-lib/config"
+import (
+	"github.com/stakkato95/service-engineering-go-lib/config"
+)
 
 type Config struct {
-	ServerPort   string `mapstructure:"SERVER_PORT"`
-	UsersService string `mapstructure:"USERS_SERVICE"`
+	ServerPort    string `mapstructure:"SERVER_PORT"`
+	UsersService  string `mapstructure:"USERS_SERVICE"`
+	UsersGrpcPort string `mapstructure:"USERS_GRPC_PORT"`
 }
 
 var AppConfig Config
 
 func init() {
 	config.Init(&AppConfig, Config{})
+}
+
+func UsersGrpc() string {
+	return AppConfig.UsersService + AppConfig.UsersGrpcPort
 }

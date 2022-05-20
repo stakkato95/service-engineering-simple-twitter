@@ -22,9 +22,9 @@ import (
 )
 
 func main() {
-	//3 add grpc to users service
-	//4 add grpc calls to users service (users in k8s + graphql on localhost)
-	//5 add grpc calls to users service (users in k8s + graphql in k8s)
+	//1 users service: return real data via grpc
+	//2 graphql service: return real data to graphql frontend
+	//3 ??? send tweets + receive tweets with beego
 
 	repo := domain.NewUserRepo()
 	service := service.NewUserService(repo)
@@ -37,8 +37,7 @@ func main() {
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", srv)
 
-	//
-	conn, err := grpc.Dial("localhost:9090", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(config.UsersGrpc(), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		logger.Fatal("can not listen to users grpc server: " + err.Error())
 	}
@@ -53,7 +52,7 @@ func main() {
 	if err != nil {
 		logger.Fatal("can not create user via users grpc interface: " + err.Error())
 	}
-	logger.Info(fmt.Sprintf("newUser: %#v", newUser))
+	logger.Info(fmt.Sprintf("newUser: %v", newUser))
 
 	logger.Info("graphql service listening on port " + config.AppConfig.ServerPort)
 	logger.Fatal("can not run server " + http.ListenAndServe(config.AppConfig.ServerPort, router).Error())

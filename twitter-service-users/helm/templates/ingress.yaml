@@ -20,11 +20,4 @@ spec:
             name: {{ .Chart.Name }}
             port:
               number: 80
-      - path: /users
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Chart.Name }}
-            port:
-              number: 90
 {{- end }}
