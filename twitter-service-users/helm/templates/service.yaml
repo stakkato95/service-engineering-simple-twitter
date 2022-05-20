@@ -7,8 +7,11 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.service.httpPort }}
       targetPort: http
+      protocol: TCP
+    - port: {{ .Values.service.grpcPort }}
+      targetPort: grpc
       protocol: TCP
   selector:
     {{- include "helm.selectorLabels" . | nindent 4 }}

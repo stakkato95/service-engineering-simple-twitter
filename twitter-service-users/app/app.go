@@ -23,5 +23,5 @@ func Start() {
 	router.Post("/debug/auth", h.auth)
 
 	logger.Info("users service listening on port " + config.AppConfig.ServerPort)
-	logger.Fatal("can not run server " + http.ListenAndServe(config.AppConfig.ServerPort, router).Error())
+	logger.Fatal("can not run server: " + http.ListenAndServe(config.AppConfig.ServerPort, router).Error())
 }

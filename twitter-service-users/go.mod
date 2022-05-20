@@ -4,7 +4,14 @@ go 1.18
 
 require github.com/stakkato95/service-engineering-go-lib v0.1.2
 
-require github.com/go-sql-driver/mysql v1.6.0 // indirect
+require (
+	github.com/go-sql-driver/mysql v1.6.0 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
+	golang.org/x/net v0.0.0-20220412020605-290c469a71a5 // indirect
+	google.golang.org/genproto v0.0.0-20220407144326-9054f6ed7bac // indirect
+	google.golang.org/grpc v1.46.2 // indirect
+	google.golang.org/protobuf v1.28.0 // indirect
+)
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible

@@ -7,3 +7,5 @@ besonderheit
 - jwt https://jwt.io/
 
 Dockerfile - soll im projekt bleiben
+
+go get google.golang.org/grpc

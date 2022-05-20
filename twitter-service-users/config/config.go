@@ -3,6 +3,7 @@ package config
 import "github.com/stakkato95/service-engineering-go-lib/config"
 
 type Config struct {
+	GrpcPort   string `mapstructure:"GRPC_PORT"`
 	ServerPort string `mapstructure:"SERVER_PORT"`
 	JwtSecret  string `mapstructure:"JWT_SECRET"`
 	DbDriver   string `mapstructure:"DB_DRIVER"`
