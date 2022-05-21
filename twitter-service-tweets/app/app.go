@@ -15,5 +15,6 @@ func Start() {
 
 	router := gin.Default()
 	router.POST("/tweets", h.addTweet)
+	router.GET("/tweets/:userId", h.getTweets)
 	router.Run(config.AppConfig.ServerPort)
 }
