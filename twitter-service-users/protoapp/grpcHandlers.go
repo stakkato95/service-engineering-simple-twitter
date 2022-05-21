@@ -2,26 +2,35 @@ package protoapp
 
 import (
 	"context"
+	"errors"
 
 	pb "github.com/stakkato95/twitter-service-users/proto"
+	"github.com/stakkato95/twitter-service-users/service"
 )
 
 type defaultUsersServiceServer struct {
 	pb.UnimplementedUsersServiceServer
+	service service.UserService
 }
 
-func (defaultUsersServiceServer) CreateUser(ctx context.Context, user *pb.User) (*pb.NewUser, error) {
-	u := &pb.NewUser{
-		User: &pb.User{
-			Id:       1,
-			Username: "user100500",
-			Password: "pass",
-		},
-		Token: &pb.Token{Token: "tokenn"},
+func NewUsersServiceServer(service service.UserService) pb.UsersServiceServer {
+	return &defaultUsersServiceServer{service: service}
+}
+
+func (s *defaultUsersServiceServer) CreateUser(ctx context.Context, user *pb.User) (*pb.NewUser, error) {
+	entity := ToEntity(user)
+	token, createdUser, err := s.service.Create(&entity)
+	if err != nil {
+		return nil, errors.New(err.Msg)
 	}
-	return u, nil
+	return ToDto(createdUser, token), nil
 }
 
-func (defaultUsersServiceServer) AuthUser(ctx context.Context, user *pb.User) (*pb.Token, error) {
-	return &pb.Token{Token: "token100500"}, nil
+func (s *defaultUsersServiceServer) AuthUser(ctx context.Context, user *pb.User) (*pb.Token, error) {
+	entity := ToEntity(user)
+	token, err := s.service.Authenticate(&entity)
+	if err != nil {
+		return nil, errors.New(err.Msg)
+	}
+	return &pb.Token{Token: token}, nil
 }
