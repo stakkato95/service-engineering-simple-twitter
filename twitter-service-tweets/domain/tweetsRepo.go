@@ -1,23 +1,46 @@
 package domain
 
+import (
+	"fmt"
+
+	"github.com/stakkato95/service-engineering-go-lib/logger"
+	"github.com/stakkato95/twitter-service-tweets/config"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
+
 type TweetsRepo interface {
-	AddTweet(Tweet) (*Tweet, error)
-	GetAllTweets(int) ([]Tweet, error)
+	AddTweet(Tweet) *Tweet
+	GetAllTweets(int) []Tweet
 }
 
 type postgresTweetsRepo struct {
+	db *gorm.DB
 }
 
 func NewTweetsRepo() TweetsRepo {
-	return &postgresTweetsRepo{}
+	//postgresql.default.svc.cluster.local
+	db, err := gorm.Open(postgres.Open(config.AppConfig.DbSource), &gorm.Config{})
+	if err != nil {
+		logger.Fatal("failed to connect database: " + err.Error())
+	}
+
+	// Migrate the schema
+	if err := db.AutoMigrate(&Tweet{}); err != nil {
+		logger.Fatal("failed to migrate database: " + err.Error())
+	}
+
+	return &postgresTweetsRepo{db}
 }
 
-func (r *postgresTweetsRepo) AddTweet(tweet Tweet) (*Tweet, error) {
-	return &tweet, nil
+func (r *postgresTweetsRepo) AddTweet(tweet Tweet) *Tweet {
+	r.db.Create(&tweet)
+	logger.Info(fmt.Sprintf("added tweet with id: %d", tweet.Id))
+	return &tweet
 }
 
-func (r *postgresTweetsRepo) GetAllTweets(userId int) ([]Tweet, error) {
-	return []Tweet{
-		{Id: 1, UserId: 2, Text: "hello tweet"},
-	}, nil
+func (r *postgresTweetsRepo) GetAllTweets(userId int) []Tweet {
+	tweets := []Tweet{}
+	r.db.Where("user_id = ?", userId).Find(&tweets)
+	return tweets
 }

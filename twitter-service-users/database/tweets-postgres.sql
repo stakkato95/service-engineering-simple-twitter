@@ -11,3 +11,5 @@
 -- -- INSERT INTO tweet (userId, text) VALUES (1, 'new tweet');
 --
 -- SELECT * FROM tweets WHERE user_id = 2;
+
+SELECT * FROM tweets;

@@ -23,12 +23,7 @@ func (h *TweetsHandler) addTweet(ctx *gin.Context) {
 		return
 	}
 
-	createdTweet, err := h.service.AddTweet(tweetDto)
-	if err != nil {
-		errorResponse(ctx, err)
-		return
-	}
-
+	createdTweet := h.service.AddTweet(tweetDto)
 	ctx.JSON(http.StatusOK, dto.ResponseDto{Data: *createdTweet})
 }
 
@@ -39,12 +34,7 @@ func (h *TweetsHandler) getTweets(ctx *gin.Context) {
 		return
 	}
 
-	tweets, err := h.service.GetAllTweets(uriParams.UserId)
-	if err != nil {
-		errorResponse(ctx, err)
-		return
-	}
-
+	tweets := h.service.GetAllTweets(uriParams.UserId)
 	ctx.JSON(http.StatusOK, dto.ResponseDto{Data: tweets})
 }
 

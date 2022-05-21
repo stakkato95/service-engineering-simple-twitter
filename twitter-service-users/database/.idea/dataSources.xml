@@ -8,11 +8,11 @@
       <jdbc-url>jdbc:mysql://localhost:3306/users</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="tweets@localhost" uuid="f262594c-247a-4a9c-8d58-a5f0fab709f5">
+    <data-source source="LOCAL" name="tweetsdb@localhost" uuid="f262594c-247a-4a9c-8d58-a5f0fab709f5">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/tweets</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:5432/tweetsdb</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
