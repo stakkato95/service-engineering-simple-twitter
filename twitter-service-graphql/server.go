@@ -1,10 +1,7 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -15,18 +12,10 @@ import (
 	"github.com/stakkato95/twitter-service-graphql/graph/generated"
 	"github.com/stakkato95/twitter-service-graphql/http/domain"
 	"github.com/stakkato95/twitter-service-graphql/http/service"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-
-	pb "github.com/stakkato95/twitter-service-graphql/proto"
 )
 
 func main() {
-	//1 users service: return real data via grpc
-	//2 graphql service: return real data to graphql frontend
-	//3 ??? send tweets + receive tweets with beego
-
-	repo := domain.NewUserRepo()
+	repo := domain.NewGrpcUserRepo()
 	service := service.NewUserService(repo)
 
 	router := chi.NewRouter()
@@ -36,23 +25,6 @@ func main() {
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", srv)
-
-	conn, err := grpc.Dial(config.UsersGrpc(), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		logger.Fatal("can not listen to users grpc server: " + err.Error())
-	}
-	defer conn.Close()
-
-	client := pb.NewUsersServiceClient(conn)
-
-	timeout := 10
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
-	defer cancel()
-	newUser, err := client.CreateUser(ctx, &pb.User{Username: "u", Password: "p"})
-	if err != nil {
-		logger.Fatal("can not create user via users grpc interface: " + err.Error())
-	}
-	logger.Info(fmt.Sprintf("newUser: %v", newUser))
 
 	logger.Info("graphql service listening on port " + config.AppConfig.ServerPort)
 	logger.Fatal("can not run server " + http.ListenAndServe(config.AppConfig.ServerPort, router).Error())
