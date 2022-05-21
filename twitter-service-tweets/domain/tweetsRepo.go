@@ -19,7 +19,6 @@ type postgresTweetsRepo struct {
 }
 
 func NewTweetsRepo() TweetsRepo {
-	//postgresql.default.svc.cluster.local
 	db, err := gorm.Open(postgres.Open(config.AppConfig.DbSource), &gorm.Config{})
 	if err != nil {
 		logger.Fatal("failed to connect database: " + err.Error())
