@@ -8,8 +8,9 @@ besonderheit
 
 Dockerfile - soll im projekt bleiben
 
-go get google.golang.org/grpc
+https://www.howtographql.com/graphql-go/1-getting-started/
 
+go get google.golang.org/grpc
 https://grpc.io/docs/languages/go/quickstart/
 https://github.com/grpc/grpc-go/blob/master/examples/route_guide/routeguide/route_guide.proto
 https://github.com/grpc/grpc-go/blob/9f4b31a11cc4deba7f5c542399d5ec71fab3a053/examples/route_guide/client/client.go#L48

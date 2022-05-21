@@ -1,6 +1,6 @@
 apiVersion: v2
-name: twitter-service-graphql
-description: A Helm chart for twitter graphql service
+name: twitter-service-tweets
+description: A Helm chart for twitter tweets service
 
 home: https://github.com/stakkato95/service-engineering-simple-twitter
 
