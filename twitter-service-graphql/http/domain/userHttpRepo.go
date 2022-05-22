@@ -64,3 +64,12 @@ func (r *httpUserRepo) Authenticate(user *dto.UserDto) (*dto.TokenDto, error) {
 
 	return &tokenDto, nil
 }
+
+func (r *httpUserRepo) Authorize(*dto.TokenDto) (*dto.UserDto, error) {
+	// stub
+	stubUser := &dto.UserDto{
+		Id:       1,
+		Username: "userStub",
+	}
+	return stubUser, nil
+}

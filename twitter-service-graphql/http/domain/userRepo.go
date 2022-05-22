@@ -7,4 +7,5 @@ import (
 type UserRepo interface {
 	Create(*dto.UserDto) (*dto.NewUserDto, error)
 	Authenticate(*dto.UserDto) (*dto.TokenDto, error)
+	Authorize(*dto.TokenDto) (*dto.UserDto, error)
 }

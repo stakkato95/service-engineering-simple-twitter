@@ -23,7 +23,7 @@ func (s *defaultUsersServiceServer) CreateUser(ctx context.Context, user *pb.Use
 	if err != nil {
 		return nil, errors.New(err.Msg)
 	}
-	return ToDto(createdUser, token), nil
+	return NewUserToDto(createdUser, token), nil
 }
 
 func (s *defaultUsersServiceServer) AuthUser(ctx context.Context, user *pb.User) (*pb.Token, error) {
@@ -33,4 +33,12 @@ func (s *defaultUsersServiceServer) AuthUser(ctx context.Context, user *pb.User)
 		return nil, errors.New(err.Msg)
 	}
 	return &pb.Token{Token: token}, nil
+}
+
+func (s *defaultUsersServiceServer) AuthUserByToken(ctx context.Context, token *pb.Token) (*pb.User, error) {
+	user, err := s.service.Authorize(token.Token)
+	if err != nil {
+		return nil, errors.New(err.Msg)
+	}
+	return UserToDto(user), nil
 }

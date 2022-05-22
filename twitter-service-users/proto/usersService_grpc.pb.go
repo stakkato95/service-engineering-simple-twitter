@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UsersServiceClient interface {
 	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*NewUser, error)
 	AuthUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*Token, error)
+	AuthUserByToken(ctx context.Context, in *Token, opts ...grpc.CallOption) (*User, error)
 }
 
 type usersServiceClient struct {
@@ -52,12 +53,22 @@ func (c *usersServiceClient) AuthUser(ctx context.Context, in *User, opts ...grp
 	return out, nil
 }
 
+func (c *usersServiceClient) AuthUserByToken(ctx context.Context, in *Token, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, "/protoservice.UsersService/AuthUserByToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsersServiceServer is the server API for UsersService service.
 // All implementations must embed UnimplementedUsersServiceServer
 // for forward compatibility
 type UsersServiceServer interface {
 	CreateUser(context.Context, *User) (*NewUser, error)
 	AuthUser(context.Context, *User) (*Token, error)
+	AuthUserByToken(context.Context, *Token) (*User, error)
 	mustEmbedUnimplementedUsersServiceServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedUsersServiceServer) CreateUser(context.Context, *User) (*NewU
 }
 func (UnimplementedUsersServiceServer) AuthUser(context.Context, *User) (*Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AuthUser not implemented")
+}
+func (UnimplementedUsersServiceServer) AuthUserByToken(context.Context, *Token) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthUserByToken not implemented")
 }
 func (UnimplementedUsersServiceServer) mustEmbedUnimplementedUsersServiceServer() {}
 
@@ -120,6 +134,24 @@ func _UsersService_AuthUser_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UsersService_AuthUserByToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Token)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServiceServer).AuthUserByToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protoservice.UsersService/AuthUserByToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServiceServer).AuthUserByToken(ctx, req.(*Token))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UsersService_ServiceDesc is the grpc.ServiceDesc for UsersService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AuthUser",
 			Handler:    _UsersService_AuthUser_Handler,
+		},
+		{
+			MethodName: "AuthUserByToken",
+			Handler:    _UsersService_AuthUserByToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -8,6 +8,8 @@ service UsersService {
     rpc CreateUser(User) returns (NewUser);
 
     rpc AuthUser(User) returns (Token);
+
+    rpc AuthUserByToken(Token) returns (User);
 }
 
 message User {

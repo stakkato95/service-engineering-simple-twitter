@@ -13,15 +13,19 @@ func ToEntity(u *pb.User) domain.User {
 	}
 }
 
-func ToDto(u *domain.User, token string) *pb.NewUser {
+func NewUserToDto(u *domain.User, token string) *pb.NewUser {
 	return &pb.NewUser{
-		User: &pb.User{
-			Id:       u.Id,
-			Username: u.Username,
-			Password: u.Password,
-		},
+		User: UserToDto(u),
 		Token: &pb.Token{
 			Token: token,
 		},
+	}
+}
+
+func UserToDto(u *domain.User) *pb.User {
+	return &pb.User{
+		Id:       u.Id,
+		Username: u.Username,
+		Password: u.Password,
 	}
 }

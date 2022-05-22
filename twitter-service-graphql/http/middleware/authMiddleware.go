@@ -2,8 +2,10 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
+	"github.com/stakkato95/service-engineering-go-lib/logger"
 	"github.com/stakkato95/twitter-service-graphql/http/dto"
 	"github.com/stakkato95/twitter-service-graphql/http/service"
 	// "github.com/stakkato95/graphql-test/internal/users"
@@ -20,7 +22,6 @@ func Auth(service service.UserService) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token := r.Header.Get("Authorization")
-
 			// for auth endpoints
 			if token == "" {
 				next.ServeHTTP(w, r)
@@ -33,6 +34,7 @@ func Auth(service service.UserService) func(http.Handler) http.Handler {
 				return
 			}
 
+			logger.Info(fmt.Sprintf(">>>>>>>.authorized user: %v", user))
 			ctx := context.WithValue(r.Context(), userCtxKey, &user)
 			r = r.WithContext(ctx)
 			next.ServeHTTP(w, r)

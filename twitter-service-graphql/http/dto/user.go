@@ -34,13 +34,17 @@ func NewUserToProto(u *UserDto) *pb.User {
 	}
 }
 
+func UserToDto(u *pb.User) *UserDto {
+	return &UserDto{
+		Id:       u.Id,
+		Username: u.Username,
+		Password: u.Password,
+	}
+}
+
 func NewUserToDto(newUser *pb.NewUser) *NewUserDto {
 	return &NewUserDto{
-		User: UserDto{
-			Id:       newUser.User.Id,
-			Username: newUser.User.Username,
-			Password: newUser.User.Password,
-		},
+		User:  *UserToDto(newUser.User),
 		Token: TokenDto{newUser.Token.Token},
 	}
 }

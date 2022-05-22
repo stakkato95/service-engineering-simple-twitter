@@ -16,6 +16,7 @@ var passwordErr = errs.NewAppError(
 type UserService interface {
 	Create(*domain.User) (string, *domain.User, *errs.AppError)
 	Authenticate(*domain.User) (string, *errs.AppError)
+	Authorize(string) (*domain.User, *errs.AppError)
 }
 
 type defaultUserService struct {
@@ -51,6 +52,13 @@ func (s *defaultUserService) Authenticate(user *domain.User) (string, *errs.AppE
 	}
 
 	return generateToken(user.Username)
+}
+
+func (s *defaultUserService) Authorize(token string) (*domain.User, *errs.AppError) {
+	return &domain.User{
+		Id:       1,
+		Username: "user100500",
+	}, nil
 }
 
 func checkPasswordHash(hashedPassword, hash string) bool {

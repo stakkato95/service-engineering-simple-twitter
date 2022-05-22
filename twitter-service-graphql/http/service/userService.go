@@ -45,9 +45,15 @@ func (s *defaultUserService) Authenticate(login model.Login) (string, error) {
 }
 
 func (s *defaultUserService) Authorize(token string) (*dto.UserDto, error) {
-	return &dto.UserDto{
-		Id:       1,
-		Username: "user1",
-		Password: "pass",
-	}, nil
+	user, err := s.repo.Authorize(&dto.TokenDto{Token: token})
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+	// return &dto.UserDto{
+	// 	Id:       1,
+	// 	Username: "user1",
+	// 	Password: "pass",
+	// }, nil
 }

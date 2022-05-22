@@ -42,7 +42,17 @@ func (r *grpcUserRepo) Authenticate(user *dto.UserDto) (*dto.TokenDto, error) {
 	defer cancel()
 	token, err := r.client.AuthUser(ctx, dto.NewUserToProto(user))
 	if err != nil {
-		logger.Fatal("can not auth user via users grpc interface: " + err.Error())
+		logger.Fatal("can not authenticate user via users grpc interface: " + err.Error())
 	}
 	return dto.TokenToDto(token), nil
+}
+
+func (r *grpcUserRepo) Authorize(token *dto.TokenDto) (*dto.UserDto, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
+	defer cancel()
+	user, err := r.client.AuthUserByToken(ctx, &pb.Token{Token: token.Token})
+	if err != nil {
+		logger.Fatal("can not authorize user by token via users grpc interface: " + err.Error())
+	}
+	return dto.UserToDto(user), nil
 }
