@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/stakkato95/service-engineering-go-lib/logger"
@@ -30,12 +29,12 @@ func Auth(service service.UserService) func(http.Handler) http.Handler {
 
 			user, err := service.Authorize(token)
 			if err != nil {
+				logger.Error("can not authorize by token: " + err.Error())
 				next.ServeHTTP(w, r)
 				return
 			}
 
-			logger.Info(fmt.Sprintf(">>>>>>>.authorized user: %v", user))
-			ctx := context.WithValue(r.Context(), userCtxKey, &user)
+			ctx := context.WithValue(r.Context(), userCtxKey, user)
 			r = r.WithContext(ctx)
 			next.ServeHTTP(w, r)
 		})

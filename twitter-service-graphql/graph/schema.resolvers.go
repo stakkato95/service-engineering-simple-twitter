@@ -5,9 +5,11 @@ package graph
 
 import (
 	"context"
+	"errors"
 
 	"github.com/stakkato95/twitter-service-graphql/graph/generated"
 	"github.com/stakkato95/twitter-service-graphql/graph/model"
+	"github.com/stakkato95/twitter-service-graphql/http/middleware"
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (string, error) {
@@ -19,11 +21,21 @@ func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string
 }
 
 func (r *mutationResolver) CreateTweet(ctx context.Context, input model.NewTweet) (*model.Tweet, error) {
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("invalid authorization")
+	}
+
 	return r.TweetService.CreateTweet(input)
 }
 
 func (r *queryResolver) Tweets(ctx context.Context) ([]*model.Tweet, error) {
-	return r.TweetService.GetTweets(1)
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("invalid authorization")
+	}
+
+	return r.TweetService.GetTweets(int(user.Id))
 }
 
 // Mutation returns generated.MutationResolver implementation.

@@ -52,7 +52,7 @@ func (r *grpcUserRepo) Authorize(token *dto.TokenDto) (*dto.UserDto, error) {
 	defer cancel()
 	user, err := r.client.AuthUserByToken(ctx, &pb.Token{Token: token.Token})
 	if err != nil {
-		logger.Fatal("can not authorize user by token via users grpc interface: " + err.Error())
+		return nil, err
 	}
 	return dto.UserToDto(user), nil
 }
