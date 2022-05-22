@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/stakkato95/service-engineering-go-lib/logger"
@@ -64,7 +65,35 @@ func (r *defaultTweetRepo) CreateTweet(tweet *dto.Tweet) (*dto.Tweet, error) {
 }
 
 func (r *defaultTweetRepo) GetTweets(userId int) ([]dto.Tweet, error) {
-	return nil, nil
+	response, err := http.DefaultClient.Get(fmt.Sprintf("http://localhost/tweets/debug/tweets/%d", userId))
+	if err != nil {
+		logger.Fatal("GET request to tweets service failed: " + err.Error())
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	responseDto := dto.ResponseDto{}
+	if err := json.NewDecoder(response.Body).Decode(&responseDto); err != nil {
+		logger.Fatal("can not decode response from tweets service: " + err.Error())
+		return nil, err
+	}
+
+	if responseDto.Error != "" {
+		return nil, errors.New(responseDto.Error)
+	}
+
+	jsonData, err := json.Marshal(responseDto.Data)
+	if err != nil {
+		return nil, errors.New("can not marshal tweets data: " + err.Error())
+	}
+
+	tweets := []dto.Tweet{}
+	if err := json.NewDecoder(bytes.NewBuffer(jsonData)).Decode(&tweets); err != nil {
+		logger.Fatal("can not decode tweets from data: " + err.Error())
+		return nil, err
+	}
+
+	return tweets, nil
 }
 
 func mapToTweetDto(tweetMap map[string]interface{}) *dto.Tweet {

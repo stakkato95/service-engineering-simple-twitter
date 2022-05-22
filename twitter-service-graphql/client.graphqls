@@ -13,3 +13,11 @@ mutation {
     text
   }
 }
+
+{
+  tweets {
+    id
+    userId
+    text
+  }
+}

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -36,6 +37,7 @@ type Config struct {
 
 type ResolverRoot interface {
 	Mutation() MutationResolver
+	Query() QueryResolver
 }
 
 type DirectiveRoot struct {
@@ -49,6 +51,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Tweets func(childComplexity int) int
 	}
 
 	Tweet struct {
@@ -62,6 +65,9 @@ type MutationResolver interface {
 	CreateUser(ctx context.Context, input model.NewUser) (string, error)
 	Login(ctx context.Context, input model.Login) (string, error)
 	CreateTweet(ctx context.Context, input model.NewTweet) (*model.Tweet, error)
+}
+type QueryResolver interface {
+	Tweets(ctx context.Context) ([]*model.Tweet, error)
 }
 
 type executableSchema struct {
@@ -114,6 +120,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Login(childComplexity, args["input"].(model.Login)), true
+
+	case "Query.tweets":
+		if e.complexity.Query.Tweets == nil {
+			break
+		}
+
+		return e.complexity.Query.Tweets(childComplexity), true
 
 	case "Tweet.id":
 		if e.complexity.Tweet.ID == nil {
@@ -240,6 +253,10 @@ type Tweet {
   id: Int!
   userId: Int!
   text: String!
+}
+
+type Query {
+  tweets: [Tweet!]!
 }
 
 input NewUser {
@@ -538,6 +555,58 @@ func (ec *executionContext) fieldContext_Mutation_createTweet(ctx context.Contex
 	if fc.Args, err = ec.field_Mutation_createTweet_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_tweets(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_tweets(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Tweets(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Tweet)
+	fc.Result = res
+	return ec.marshalNTweet2ᚕᚖgithubᚗcomᚋstakkato95ᚋtwitterᚑserviceᚑgraphqlᚋgraphᚋmodelᚐTweetᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_tweets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Tweet_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_Tweet_userId(ctx, field)
+			case "text":
+				return ec.fieldContext_Tweet_text(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Tweet", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -2753,6 +2822,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
+		case "tweets":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_tweets(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "__type":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -3198,6 +3290,50 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 
 func (ec *executionContext) marshalNTweet2githubᚗcomᚋstakkato95ᚋtwitterᚑserviceᚑgraphqlᚋgraphᚋmodelᚐTweet(ctx context.Context, sel ast.SelectionSet, v model.Tweet) graphql.Marshaler {
 	return ec._Tweet(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTweet2ᚕᚖgithubᚗcomᚋstakkato95ᚋtwitterᚑserviceᚑgraphqlᚋgraphᚋmodelᚐTweetᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Tweet) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTweet2ᚖgithubᚗcomᚋstakkato95ᚋtwitterᚑserviceᚑgraphqlᚋgraphᚋmodelᚐTweet(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNTweet2ᚖgithubᚗcomᚋstakkato95ᚋtwitterᚑserviceᚑgraphqlᚋgraphᚋmodelᚐTweet(ctx context.Context, sel ast.SelectionSet, v *model.Tweet) graphql.Marshaler {

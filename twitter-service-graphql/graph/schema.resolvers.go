@@ -22,7 +22,15 @@ func (r *mutationResolver) CreateTweet(ctx context.Context, input model.NewTweet
 	return r.TweetService.CreateTweet(input)
 }
 
+func (r *queryResolver) Tweets(ctx context.Context) ([]*model.Tweet, error) {
+	return r.TweetService.GetTweets(1)
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
+// Query returns generated.QueryResolver implementation.
+func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
+
 type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }

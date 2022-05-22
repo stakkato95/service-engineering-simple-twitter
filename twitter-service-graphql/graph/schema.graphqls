@@ -33,6 +33,10 @@ type Tweet {
   text: String!
 }
 
+type Query {
+  tweets: [Tweet!]!
+}
+
 input NewUser {
   username: String!
   password: String!

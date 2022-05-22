@@ -8,6 +8,7 @@ import (
 
 type TweetService interface {
 	CreateTweet(model.NewTweet) (*model.Tweet, error)
+	GetTweets(int) ([]*model.Tweet, error)
 }
 
 type defaultTweetService struct {
@@ -26,4 +27,18 @@ func (s *defaultTweetService) CreateTweet(tweet model.NewTweet) (*model.Tweet, e
 	}
 
 	return dto.TweetDtoToGraphql(*createdTweet), nil
+}
+
+func (s *defaultTweetService) GetTweets(userId int) ([]*model.Tweet, error) {
+	tweetsDto, err := s.repo.GetTweets(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	tweets := make([]*model.Tweet, len(tweetsDto))
+	for i, tweetDto := range tweetsDto {
+		tweets[i] = dto.TweetDtoToGraphql(tweetDto)
+	}
+
+	return tweets, nil
 }
