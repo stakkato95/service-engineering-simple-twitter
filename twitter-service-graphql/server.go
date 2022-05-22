@@ -15,6 +15,9 @@ import (
 )
 
 func main() {
+	//1 in k8s ausprobieren
+	//2 auth
+
 	userRepo := domain.NewGrpcUserRepo()
 	userService := service.NewUserService(userRepo)
 

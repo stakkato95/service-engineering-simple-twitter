@@ -10,7 +10,7 @@ import (
 	"github.com/stakkato95/twitter-service-graphql/http/dto"
 )
 
-var usersService = config.AppConfig.UsersService
+var usersService = "http://" + config.AppConfig.UsersService
 
 type httpUserRepo struct {
 }

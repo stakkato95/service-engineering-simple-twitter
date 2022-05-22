@@ -12,7 +12,7 @@ import (
 	"github.com/stakkato95/twitter-service-graphql/http/dto"
 )
 
-var tweetsService = config.AppConfig.TweetsService
+var tweetsService = "http://" + config.AppConfig.TweetsService
 
 type TweetRepo interface {
 	CreateTweet(*dto.Tweet) (*dto.Tweet, error)
@@ -33,7 +33,7 @@ func (r *defaultTweetRepo) CreateTweet(tweet *dto.Tweet) (*dto.Tweet, error) {
 		return nil, err
 	}
 
-	response, err := http.DefaultClient.Post("http://localhost/tweets/debug/tweets", "application/json", bytes.NewBuffer(jsonData))
+	response, err := http.DefaultClient.Post(tweetsService+"/tweets", "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		logger.Fatal("POST request to tweets service failed: " + err.Error())
 		return nil, err
@@ -65,7 +65,7 @@ func (r *defaultTweetRepo) CreateTweet(tweet *dto.Tweet) (*dto.Tweet, error) {
 }
 
 func (r *defaultTweetRepo) GetTweets(userId int) ([]dto.Tweet, error) {
-	response, err := http.DefaultClient.Get(fmt.Sprintf("http://localhost/tweets/debug/tweets/%d", userId))
+	response, err := http.DefaultClient.Get(fmt.Sprintf(tweetsService+"/tweets/%d", userId))
 	if err != nil {
 		logger.Fatal("GET request to tweets service failed: " + err.Error())
 		return nil, err
@@ -94,12 +94,4 @@ func (r *defaultTweetRepo) GetTweets(userId int) ([]dto.Tweet, error) {
 	}
 
 	return tweets, nil
-}
-
-func mapToTweetDto(tweetMap map[string]interface{}) *dto.Tweet {
-	return &dto.Tweet{
-		Id:     int(tweetMap["id"].(float64)),
-		UserId: int(tweetMap["userId"].(float64)),
-		Text:   tweetMap["text"].(string),
-	}
 }
