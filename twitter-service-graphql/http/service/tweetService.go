@@ -7,7 +7,7 @@ import (
 )
 
 type TweetService interface {
-	CreateTweet(model.NewTweet) (*model.Tweet, error)
+	CreateTweet(model.NewTweet, int) (*model.Tweet, error)
 	GetTweets(int) ([]*model.Tweet, error)
 }
 
@@ -19,8 +19,8 @@ func NewTweetService(repo domain.TweetRepo) TweetService {
 	return &defaultTweetService{repo}
 }
 
-func (s *defaultTweetService) CreateTweet(tweet model.NewTweet) (*model.Tweet, error) {
-	tweetDto := dto.TweetToDto(tweet)
+func (s *defaultTweetService) CreateTweet(tweet model.NewTweet, userId int) (*model.Tweet, error) {
+	tweetDto := dto.TweetToDto(tweet, userId)
 	createdTweet, err := s.repo.CreateTweet(tweetDto)
 	if err != nil {
 		return nil, err

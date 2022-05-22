@@ -220,36 +220,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/schema.graphqls", Input: `# # GraphQL schema example
-# #
-# # https://gqlgen.com/getting-started/
-
-# type Todo {
-#   id: ID!
-#   text: String!
-#   done: Boolean!
-#   user: User!
-# }
-
-# type User {
-#   id: ID!
-#   name: String!
-# }
-
-# type Query {
-#   todos: [Todo!]!
-# }
-
-# input NewTodo {
-#   text: String!
-#   userId: String!
-# }
-
-# type Mutation {
-#   createTodo(input: NewTodo!): Todo!
-# }
-
-type Tweet {
+	{Name: "graph/schema.graphqls", Input: `type Tweet {
   id: Int!
   userId: Int!
   text: String!
@@ -270,7 +241,6 @@ input Login {
 }
 
 input NewTweet {
-  userId: Int!
   text: String!
 }
 
@@ -2685,14 +2655,6 @@ func (ec *executionContext) unmarshalInputNewTweet(ctx context.Context, obj inte
 
 	for k, v := range asMap {
 		switch k {
-		case "userId":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
-			it.UserID, err = ec.unmarshalNInt2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "text":
 			var err error
 

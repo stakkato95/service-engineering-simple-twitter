@@ -10,9 +10,9 @@ type Tweet struct {
 	Text   string `json:"text"`
 }
 
-func TweetToDto(tweet model.NewTweet) *Tweet {
+func TweetToDto(tweet model.NewTweet, userId int) *Tweet {
 	return &Tweet{
-		UserId: tweet.UserID,
+		UserId: userId,
 		Text:   tweet.Text,
 	}
 }

@@ -7,8 +7,6 @@ import (
 	"github.com/stakkato95/service-engineering-go-lib/logger"
 	"github.com/stakkato95/twitter-service-graphql/http/dto"
 	"github.com/stakkato95/twitter-service-graphql/http/service"
-	// "github.com/stakkato95/graphql-test/internal/users"
-	// "github.com/stakkato95/graphql-test/pkg/jwt"
 )
 
 type contextKey struct {

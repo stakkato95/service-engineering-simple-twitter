@@ -8,8 +8,7 @@ type Login struct {
 }
 
 type NewTweet struct {
-	UserID int    `json:"userId"`
-	Text   string `json:"text"`
+	Text string `json:"text"`
 }
 
 type NewUser struct {

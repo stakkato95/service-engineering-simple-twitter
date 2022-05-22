@@ -26,7 +26,7 @@ func (r *mutationResolver) CreateTweet(ctx context.Context, input model.NewTweet
 		return nil, errors.New("invalid authorization")
 	}
 
-	return r.TweetService.CreateTweet(input)
+	return r.TweetService.CreateTweet(input, int(user.Id))
 }
 
 func (r *queryResolver) Tweets(ctx context.Context) ([]*model.Tweet, error) {
