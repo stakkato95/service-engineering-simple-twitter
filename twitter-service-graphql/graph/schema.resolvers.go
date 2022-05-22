@@ -11,11 +11,15 @@ import (
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (string, error) {
-	return r.Service.Create(input)
+	return r.UserService.Create(input)
 }
 
 func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string, error) {
-	return r.Service.Authenticate(input)
+	return r.UserService.Authenticate(input)
+}
+
+func (r *mutationResolver) CreateTweet(ctx context.Context, input model.NewTweet) (*model.Tweet, error) {
+	return r.TweetService.CreateTweet(input)
 }
 
 // Mutation returns generated.MutationResolver implementation.

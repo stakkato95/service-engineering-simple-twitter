@@ -3,7 +3,7 @@ package dto
 import "github.com/stakkato95/twitter-service-tweets/domain"
 
 type TweetDto struct {
-	Id     int    `json:",omitempty"`
+	Id     int    `json:"id,omitempty"`
 	UserId int    `json:"userId" binding:"required"`
 	Text   string `json:"text" binding:"required"`
 }

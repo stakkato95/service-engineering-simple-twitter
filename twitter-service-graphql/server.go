@@ -15,12 +15,15 @@ import (
 )
 
 func main() {
-	repo := domain.NewGrpcUserRepo()
-	service := service.NewUserService(repo)
+	userRepo := domain.NewGrpcUserRepo()
+	userService := service.NewUserService(userRepo)
+
+	tweetRepo := domain.NewTweetRepo()
+	tweetService := service.NewTweetService(tweetRepo)
 
 	router := chi.NewRouter()
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
-		Resolvers: &graph.Resolver{Service: service},
+		Resolvers: &graph.Resolver{UserService: userService, TweetService: tweetService},
 	}))
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))

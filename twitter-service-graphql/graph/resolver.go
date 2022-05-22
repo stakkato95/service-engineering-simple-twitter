@@ -9,5 +9,6 @@ import (
 )
 
 type Resolver struct {
-	Service service.UserService
+	UserService  service.UserService
+	TweetService service.TweetService
 }

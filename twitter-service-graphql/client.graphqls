@@ -5,3 +5,11 @@ mutation {
 mutation {
   login(input: {username: "user1", password: "pass"})
 }
+
+mutation {
+  createTweet(input: {userId: 1, text: "new tweet"}) {
+    id
+    userId
+    text
+  }
+}

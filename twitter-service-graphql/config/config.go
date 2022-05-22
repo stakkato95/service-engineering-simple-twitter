@@ -8,6 +8,7 @@ type Config struct {
 	ServerPort    string `mapstructure:"SERVER_PORT"`
 	UsersService  string `mapstructure:"USERS_SERVICE"`
 	UsersGrpcPort string `mapstructure:"USERS_GRPC_PORT"`
+	TweetsService string `mapstructure:"TWEETS_SERVICE"`
 }
 
 var AppConfig Config

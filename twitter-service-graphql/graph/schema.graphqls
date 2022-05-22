@@ -27,6 +27,12 @@
 #   createTodo(input: NewTodo!): Todo!
 # }
 
+type Tweet {
+  id: Int!
+  userId: Int!
+  text: String!
+}
+
 input NewUser {
   username: String!
   password: String!
@@ -37,8 +43,15 @@ input Login {
   password: String!
 }
 
+input NewTweet {
+  userId: Int!
+  text: String!
+}
+
 type Mutation {
   createUser(input: NewUser!): String!
 
   login(input: Login!): String!
+
+  createTweet(input: NewTweet!): Tweet!
 }

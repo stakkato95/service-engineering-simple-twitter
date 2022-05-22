@@ -13,3 +13,4 @@
 -- SELECT * FROM tweets WHERE user_id = 2;
 
 SELECT * FROM tweets;
+TRUNCATE TABLE tweets;

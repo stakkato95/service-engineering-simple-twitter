@@ -7,7 +7,18 @@ type Login struct {
 	Password string `json:"password"`
 }
 
+type NewTweet struct {
+	UserID int    `json:"userId"`
+	Text   string `json:"text"`
+}
+
 type NewUser struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type Tweet struct {
+	ID     int    `json:"id"`
+	UserID int    `json:"userId"`
+	Text   string `json:"text"`
 }
