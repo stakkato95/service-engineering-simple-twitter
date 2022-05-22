@@ -12,6 +12,7 @@ import (
 type UserService interface {
 	Create(model.NewUser) (string, error)
 	Authenticate(model.Login) (string, error)
+	Authorize(string) (*dto.UserDto, error)
 }
 
 type defaultUserService struct {
@@ -41,4 +42,12 @@ func (s *defaultUserService) Authenticate(login model.Login) (string, error) {
 	}
 
 	return tokenDto.Token, nil
+}
+
+func (s *defaultUserService) Authorize(token string) (*dto.UserDto, error) {
+	return &dto.UserDto{
+		Id:       1,
+		Username: "user1",
+		Password: "pass",
+	}, nil
 }

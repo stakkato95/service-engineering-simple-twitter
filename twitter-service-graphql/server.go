@@ -11,13 +11,11 @@ import (
 	"github.com/stakkato95/twitter-service-graphql/graph"
 	"github.com/stakkato95/twitter-service-graphql/graph/generated"
 	"github.com/stakkato95/twitter-service-graphql/http/domain"
+	"github.com/stakkato95/twitter-service-graphql/http/middleware"
 	"github.com/stakkato95/twitter-service-graphql/http/service"
 )
 
 func main() {
-	//1 in k8s ausprobieren
-	//2 auth
-
 	userRepo := domain.NewGrpcUserRepo()
 	userService := service.NewUserService(userRepo)
 
@@ -25,6 +23,7 @@ func main() {
 	tweetService := service.NewTweetService(tweetRepo)
 
 	router := chi.NewRouter()
+	router.Use(middleware.Auth(userService))
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
 		Resolvers: &graph.Resolver{UserService: userService, TweetService: tweetService},
 	}))
