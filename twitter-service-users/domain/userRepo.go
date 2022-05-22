@@ -17,6 +17,7 @@ import (
 type UserRepo interface {
 	Create(*User) (*User, error)
 	Authenticate(*User) (string, error)
+	GetUserIdByUsername(string) (int, error)
 }
 
 type defaultUserRepo struct {
@@ -81,6 +82,26 @@ func (r *defaultUserRepo) Authenticate(user *User) (string, error) {
 	}
 
 	return hashedPassword, nil
+}
+
+func (r *defaultUserRepo) GetUserIdByUsername(username string) (int, error) {
+	statement, err := r.db.Prepare("select ID from user WHERE username = ?")
+	if err != nil {
+		logger.Fatal("can not create select statement: " + err.Error())
+	}
+	row := statement.QueryRow(username)
+
+	var Id int
+	err = row.Scan(&Id)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			logger.Fatal(err.Error())
+		}
+		logger.Fatal("unknown error when retrieving user id")
+		return 0, err
+	}
+
+	return Id, nil
 }
 
 func (r *defaultUserRepo) migrate() {

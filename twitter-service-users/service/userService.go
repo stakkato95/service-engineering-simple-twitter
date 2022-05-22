@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/stakkato95/service-engineering-go-lib/errs"
+	"github.com/stakkato95/service-engineering-go-lib/logger"
 	"github.com/stakkato95/twitter-service-users/domain"
 	"github.com/stakkato95/twitter-service-users/jwt"
 	"golang.org/x/crypto/bcrypt"
@@ -55,10 +56,21 @@ func (s *defaultUserService) Authenticate(user *domain.User) (string, *errs.AppE
 }
 
 func (s *defaultUserService) Authorize(token string) (*domain.User, *errs.AppError) {
-	return &domain.User{
-		Id:       1,
-		Username: "user100500",
-	}, nil
+	username, err := jwt.ParseToken(token)
+	if err != nil {
+		return nil, errs.NewAppError("invalid token", http.StatusForbidden)
+	}
+
+	id, err := s.repo.GetUserIdByUsername(username)
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+
+	return &domain.User{Id: int64(id), Username: username}, nil
+	// return &domain.User{
+	// 	Id:       1,
+	// 	Username: "user100500",
+	// }, nil
 }
 
 func checkPasswordHash(hashedPassword, hash string) bool {
