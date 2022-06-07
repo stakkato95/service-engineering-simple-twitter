@@ -8,5 +8,9 @@ echo ""
 
 cd ../twitter-service-users
 helm install users helm
+echo ""
+
+cd ../twitter-service-analytics
+helm install analytics helm
 
 cd ../k8s
