@@ -33,5 +33,5 @@ type Mutation {
 
   createTweet(input: NewTweet!): Tweet!
 
-  subcribe(input: NewSubscription!): String!
+  subscribe(input: NewSubscription!): String!
 }

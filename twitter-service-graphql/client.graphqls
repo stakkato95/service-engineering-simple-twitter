@@ -22,6 +22,10 @@ mutation {
   }
 }
 
+mutation {
+  subscribe(input: {to: 1})
+}
+
 {
   "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTQ3MTA5NzgsInVzZXJuYW1lIjoidXNlcjEifQ.bIGKqZbs2n0wMySmESKOBoTDgIOgdubey9aznfyXp9Y"
 }
