@@ -7,6 +7,10 @@ type Login struct {
 	Password string `json:"password"`
 }
 
+type NewSubscription struct {
+	To int `json:"to"`
+}
+
 type NewTweet struct {
 	Text string `json:"text"`
 }

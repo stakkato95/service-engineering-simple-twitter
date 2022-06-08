@@ -17,6 +17,7 @@ var tweetsService = "http://" + config.AppConfig.TweetsService
 type TweetRepo interface {
 	CreateTweet(*dto.Tweet) (*dto.Tweet, error)
 	GetTweets(int) ([]dto.Tweet, error)
+	Subscribe(dto.SubscriptionDto) (string, error)
 }
 
 type defaultTweetRepo struct {
@@ -94,4 +95,37 @@ func (r *defaultTweetRepo) GetTweets(userId int) ([]dto.Tweet, error) {
 	}
 
 	return tweets, nil
+}
+
+func (r *defaultTweetRepo) Subscribe(subscription dto.SubscriptionDto) (string, error) {
+	jsonData, err := json.Marshal(subscription)
+	if err != nil {
+		logger.Fatal("can not encode subscription: " + err.Error())
+		return "", err
+	}
+
+	response, err := http.DefaultClient.Post(tweetsService+"/subscription", "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		logger.Fatal("POST request to tweets service failed: " + err.Error())
+		return "", err
+	}
+	defer response.Body.Close()
+
+	responseDto := dto.ResponseDto{}
+	if err := json.NewDecoder(response.Body).Decode(&responseDto); err != nil {
+		logger.Fatal("can not decode response from tweets service: " + err.Error())
+		return "", err
+	}
+
+	if responseDto.Error != "" {
+		return "", errors.New(responseDto.Error)
+	}
+
+	result, ok := responseDto.Data.(string)
+	if !ok {
+		logger.Fatal("can not decode string from data")
+		return "", errors.New("can not decode string from data")
+	}
+
+	return result, nil
 }

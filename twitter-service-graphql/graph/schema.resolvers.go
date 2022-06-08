@@ -29,6 +29,15 @@ func (r *mutationResolver) CreateTweet(ctx context.Context, input model.NewTweet
 	return r.TweetService.CreateTweet(input, int(user.Id))
 }
 
+func (r *mutationResolver) Subcribe(ctx context.Context, input model.NewSubscription) (string, error) {
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return "", errors.New("invalid authorization")
+	}
+
+	return r.TweetService.Subscribe(int(user.Id), input.To)
+}
+
 func (r *queryResolver) Tweets(ctx context.Context) ([]*model.Tweet, error) {
 	user := middleware.ForContext(ctx)
 	if user == nil {

@@ -48,6 +48,7 @@ type ComplexityRoot struct {
 		CreateTweet func(childComplexity int, input model.NewTweet) int
 		CreateUser  func(childComplexity int, input model.NewUser) int
 		Login       func(childComplexity int, input model.Login) int
+		Subcribe    func(childComplexity int, input model.NewSubscription) int
 	}
 
 	Query struct {
@@ -65,6 +66,7 @@ type MutationResolver interface {
 	CreateUser(ctx context.Context, input model.NewUser) (string, error)
 	Login(ctx context.Context, input model.Login) (string, error)
 	CreateTweet(ctx context.Context, input model.NewTweet) (*model.Tweet, error)
+	Subcribe(ctx context.Context, input model.NewSubscription) (string, error)
 }
 type QueryResolver interface {
 	Tweets(ctx context.Context) ([]*model.Tweet, error)
@@ -121,6 +123,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Login(childComplexity, args["input"].(model.Login)), true
 
+	case "Mutation.subcribe":
+		if e.complexity.Mutation.Subcribe == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_subcribe_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.Subcribe(childComplexity, args["input"].(model.NewSubscription)), true
+
 	case "Query.tweets":
 		if e.complexity.Query.Tweets == nil {
 			break
@@ -158,6 +172,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputLogin,
+		ec.unmarshalInputNewSubscription,
 		ec.unmarshalInputNewTweet,
 		ec.unmarshalInputNewUser,
 	)
@@ -244,12 +259,18 @@ input NewTweet {
   text: String!
 }
 
+input NewSubscription {
+  to: Int!
+}
+
 type Mutation {
   createUser(input: NewUser!): String!
 
   login(input: Login!): String!
 
   createTweet(input: NewTweet!): Tweet!
+
+  subcribe(input: NewSubscription!): String!
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -295,6 +316,21 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNLogin2githubᚗcomᚋstakkato95ᚋtwitterᚑserviceᚑgraphqlᚋgraphᚋmodelᚐLogin(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_subcribe_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.NewSubscription
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNNewSubscription2githubᚗcomᚋstakkato95ᚋtwitterᚑserviceᚑgraphqlᚋgraphᚋmodelᚐNewSubscription(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -523,6 +559,61 @@ func (ec *executionContext) fieldContext_Mutation_createTweet(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createTweet_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_subcribe(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_subcribe(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Subcribe(rctx, fc.Args["input"].(model.NewSubscription))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_subcribe(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_subcribe_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -2646,6 +2737,29 @@ func (ec *executionContext) unmarshalInputLogin(ctx context.Context, obj interfa
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputNewSubscription(ctx context.Context, obj interface{}) (model.NewSubscription, error) {
+	var it model.NewSubscription
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "to":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("to"))
+			it.To, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewTweet(ctx context.Context, obj interface{}) (model.NewTweet, error) {
 	var it model.NewTweet
 	asMap := map[string]interface{}{}
@@ -2749,6 +2863,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createTweet(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "subcribe":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_subcribe(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -3222,6 +3345,11 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 
 func (ec *executionContext) unmarshalNLogin2githubᚗcomᚋstakkato95ᚋtwitterᚑserviceᚑgraphqlᚋgraphᚋmodelᚐLogin(ctx context.Context, v interface{}) (model.Login, error) {
 	res, err := ec.unmarshalInputLogin(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNNewSubscription2githubᚗcomᚋstakkato95ᚋtwitterᚑserviceᚑgraphqlᚋgraphᚋmodelᚐNewSubscription(ctx context.Context, v interface{}) (model.NewSubscription, error) {
+	res, err := ec.unmarshalInputNewSubscription(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

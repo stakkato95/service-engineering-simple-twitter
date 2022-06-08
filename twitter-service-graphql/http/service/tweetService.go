@@ -9,6 +9,7 @@ import (
 type TweetService interface {
 	CreateTweet(model.NewTweet, int) (*model.Tweet, error)
 	GetTweets(int) ([]*model.Tweet, error)
+	Subscribe(int, int) (string, error)
 }
 
 type defaultTweetService struct {
@@ -41,4 +42,12 @@ func (s *defaultTweetService) GetTweets(userId int) ([]*model.Tweet, error) {
 	}
 
 	return tweets, nil
+}
+
+func (s *defaultTweetService) Subscribe(from int, to int) (string, error) {
+	result, err := s.repo.Subscribe(dto.SubscriptionDto{From: from, To: to})
+	if err != nil {
+		return "", err
+	}
+	return result, nil
 }

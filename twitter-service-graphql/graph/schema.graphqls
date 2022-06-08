@@ -22,10 +22,16 @@ input NewTweet {
   text: String!
 }
 
+input NewSubscription {
+  to: Int!
+}
+
 type Mutation {
   createUser(input: NewUser!): String!
 
   login(input: Login!): String!
 
   createTweet(input: NewTweet!): Tweet!
+
+  subcribe(input: NewSubscription!): String!
 }
