@@ -9,7 +9,8 @@ import (
 
 func Start() {
 	repo := domain.NewTweetsRepo()
-	service := service.NewTweetsService(repo)
+	sink := domain.NewTweetsSink()
+	service := service.NewTweetsService(repo, sink)
 
 	h := TweetsHandler{service}
 

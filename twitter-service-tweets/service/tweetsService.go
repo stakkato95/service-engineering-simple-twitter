@@ -1,6 +1,9 @@
 package service
 
 import (
+	"fmt"
+
+	"github.com/stakkato95/service-engineering-go-lib/logger"
 	"github.com/stakkato95/twitter-service-tweets/domain"
 	"github.com/stakkato95/twitter-service-tweets/dto"
 )
@@ -12,16 +15,20 @@ type TweetsService interface {
 
 type defaultTweetsService struct {
 	repo domain.TweetsRepo
+	sink domain.TweetsSink
 }
 
-func NewTweetsService(repo domain.TweetsRepo) TweetsService {
-	return &defaultTweetsService{repo}
+func NewTweetsService(repo domain.TweetsRepo, sink domain.TweetsSink) TweetsService {
+	return &defaultTweetsService{repo, sink}
 }
 
 func (s *defaultTweetsService) AddTweet(tweetDto dto.TweetDto) *dto.TweetDto {
-	entity := dto.ToEntity(&tweetDto)
+	entity := domain.ToEntity(&tweetDto)
 	createdTweet := s.repo.AddTweet(*entity)
-	return dto.ToDto(createdTweet)
+	if err := s.sink.AddTweet(tweetDto); err != nil {
+		logger.Fatal(fmt.Sprintf("can not add tweet to sink: %v", tweetDto))
+	}
+	return domain.ToDto(createdTweet)
 }
 
 func (s *defaultTweetsService) GetAllTweets(userId int) []dto.TweetDto {
@@ -29,7 +36,7 @@ func (s *defaultTweetsService) GetAllTweets(userId int) []dto.TweetDto {
 	tweetsDto := make([]dto.TweetDto, len(tweets))
 
 	for i, tweet := range tweets {
-		tweetsDto[i] = *dto.ToDto(&tweet)
+		tweetsDto[i] = *domain.ToDto(&tweet)
 	}
 
 	return tweetsDto
