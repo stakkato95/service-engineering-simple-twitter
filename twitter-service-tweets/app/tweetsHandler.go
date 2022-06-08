@@ -14,7 +14,8 @@ type getTweetsUriParams struct {
 }
 
 type TweetsHandler struct {
-	service service.TweetsService
+	tweetsService       service.TweetsService
+	subscriptionService service.SubscriptionService
 }
 
 func (h *TweetsHandler) addTweet(ctx *gin.Context) {
@@ -24,7 +25,7 @@ func (h *TweetsHandler) addTweet(ctx *gin.Context) {
 		return
 	}
 
-	createdTweet := h.service.AddTweet(tweetDto)
+	createdTweet := h.tweetsService.AddTweet(tweetDto)
 	ctx.JSON(http.StatusOK, dto.ResponseDto{Data: *createdTweet})
 }
 
@@ -35,19 +36,19 @@ func (h *TweetsHandler) getTweets(ctx *gin.Context) {
 		return
 	}
 
-	tweets := h.service.GetAllTweets(uriParams.UserId)
+	tweets := h.tweetsService.GetAllTweets(uriParams.UserId)
 	ctx.JSON(http.StatusOK, dto.ResponseDto{Data: tweets})
 }
 
 func (h *TweetsHandler) addSubscription(ctx *gin.Context) {
 	logger.Info("RECEIVED")
-	// var tweetDto dto.TweetDto
-	// if err := ctx.ShouldBindJSON(&tweetDto); err != nil {
-	// 	errorResponse(ctx, err)
-	// 	return
-	// }
+	var subscriptionDto dto.SubscriptionDto
+	if err := ctx.ShouldBindJSON(&subscriptionDto); err != nil {
+		errorResponse(ctx, err)
+		return
+	}
 
-	// createdTweet := h.service.AddTweet(tweetDto)
+	h.subscriptionService.AddSubscription(subscriptionDto)
 	ctx.JSON(http.StatusOK, dto.ResponseDto{Data: "ok"})
 }
 

@@ -8,11 +8,19 @@ import (
 )
 
 func Start() {
-	repo := domain.NewTweetsRepo()
-	sink := domain.NewTweetsSink()
-	service := service.NewTweetsService(repo, sink)
+	db := domain.NewDbRepo()
 
-	h := TweetsHandler{service}
+	subscriptionRepo := domain.NewSubscriptionRepo(db)
+	subscriptionService := service.NewSubscriptionService(subscriptionRepo)
+
+	tweetsRepo := domain.NewTweetsRepo(db)
+	tweetsSink := domain.NewTweetsSink()
+	tweetsService := service.NewTweetsService(tweetsRepo, tweetsSink)
+
+	h := TweetsHandler{
+		tweetsService:       tweetsService,
+		subscriptionService: subscriptionService,
+	}
 
 	router := gin.Default()
 
