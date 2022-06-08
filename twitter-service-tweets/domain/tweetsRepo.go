@@ -26,7 +26,14 @@ func (r *simpleTweetsRepo) AddTweet(tweet Tweet) *Tweet {
 }
 
 func (r *simpleTweetsRepo) GetAllTweets(userId int) []Tweet {
+	user := User{Id: userId}
+	r.repo.GetDb().Preload("Subscriptions").First(&user)
+
 	tweets := []Tweet{}
-	r.repo.GetDb().Where("user_id = ?", userId).Find(&tweets)
+	for _, subscription := range user.Subscriptions {
+		tmp := []Tweet{}
+		r.repo.GetDb().Model(&Tweet{}).Where("user_id = ?", subscription.To).Find(&tmp)
+		tweets = append(tweets, tmp...)
+	}
 	return tweets
 }

@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stakkato95/service-engineering-go-lib/logger"
 	"github.com/stakkato95/twitter-service-tweets/dto"
 	"github.com/stakkato95/twitter-service-tweets/service"
 )
@@ -41,7 +40,6 @@ func (h *TweetsHandler) getTweets(ctx *gin.Context) {
 }
 
 func (h *TweetsHandler) addSubscription(ctx *gin.Context) {
-	logger.Info("RECEIVED")
 	var subscriptionDto dto.SubscriptionDto
 	if err := ctx.ShouldBindJSON(&subscriptionDto); err != nil {
 		errorResponse(ctx, err)
